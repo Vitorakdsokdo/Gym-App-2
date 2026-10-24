@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Meu Treino</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;700&display=swap">
+<style>
+:root{--bg:#fff;--fg:#000;--mut:#6d6d6d;--line:#e2e2e2;--soft:#f3f3f3;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#000;--fg:#fff;--mut:#9b9b9b;--line:#2b2b2b;--soft:#151515;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#000;--fg:#fff;--mut:#9b9b9b;--line:#2b2b2b;--soft:#151515;color-scheme:dark}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--fg);font:400 15px/1.4 Archivo,system-ui,sans-serif}
+#app{max-width:520px;margin:0 auto;padding:18px 18px 110px}
+h1{font-size:28px;letter-spacing:-.02em;margin:0;font-weight:700}
+h2{font-size:20px;margin:0 0 14px;font-weight:700}
+.hd{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:18px}
+.hd .t{display:flex;align-items:center;gap:6px;min-width:0}
+.hd h1{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.i{width:20px;height:20px;flex:none}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;background:var(--fg);color:var(--bg);border:1.5px solid var(--fg);border-radius:12px;padding:12px 16px;font-weight:500}
+.btn.sm{padding:8px 12px;font-size:14px}.btn.sm .i{width:18px;height:18px}
+.btn.ghost{background:transparent;color:var(--fg);border-color:var(--line)}
+.btn.full{width:100%;margin-top:10px}
+.ib{background:none;border:0;padding:8px;border-radius:50%;display:flex}
+.ib:active,.btn:active{opacity:.6}
+.card{display:flex;justify-content:space-between;align-items:center;gap:10px;border:1.5px solid var(--line);border-radius:16px;padding:14px 16px;margin-bottom:10px;cursor:pointer}
+.mut{color:var(--mut);font-size:13px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.ch{border:1.5px solid var(--line);background:transparent;border-radius:99px;padding:5px 12px;font-size:13px}
+.ch.on{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.days{display:flex;gap:6px;overflow-x:auto;margin-bottom:16px;padding-bottom:2px}
+.days .ch{padding:8px 16px;font-size:14px;flex:none}
+.row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.row img,.pv{width:64px;height:64px;border-radius:12px;object-fit:cover;background:var(--soft);flex:none}
+.rt{flex:1;min-width:0}.rt b{display:block;font-weight:500}
+.sr{text-align:right;font-size:13px;color:var(--mut);line-height:1.3}.sr b{display:block;color:var(--fg);font-size:15px}
+.sec{font-size:13px;color:var(--mut);margin:18px 0 4px}
+.empty{text-align:center;color:var(--mut);padding:54px 20px}.empty .i{width:44px;height:44px;margin-bottom:8px;stroke-width:1.4}
+label{display:block;font-size:13px;color:var(--mut);margin:14px 0 6px}
+input,select{width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:12px;padding:11px 13px;outline:none}
+input:focus,select:focus{border-color:var(--fg)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.nav{position:fixed;left:0;right:0;bottom:0;display:flex;background:var(--bg);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);z-index:10}
+.nav button{flex:1;background:none;border:0;padding:10px 0 8px;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:12px;color:var(--mut)}
+.nav button[aria-current="true"]{color:var(--fg);font-weight:700}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:flex-end;justify-content:center;z-index:20}
+.sh{background:var(--bg);width:100%;max-width:520px;max-height:90%;overflow:auto;border-radius:20px 20px 0 0;padding:20px 18px calc(20px + env(safe-area-inset-bottom,0px))}
+.pvr{display:flex;align-items:center;gap:14px}.pvr .pv{width:84px;height:84px}
+.av{width:72px;height:72px;border-radius:50%;background:var(--fg);color:var(--bg);display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:700;margin-right:14px;flex:none}
+.toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:10px 18px;border-radius:99px;z-index:30;font-size:14px}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="modal"></div>
+<nav class="nav">
+  <button data-a="tab" data-v="treino" id="t1"></button>
+  <button data-a="tab" data-v="perfil" id="t2"></button>
+</nav>
+<script>
+/* ============================================================
+   CATÁLOGO DE EXERCÍCIOS — edite aqui!
+   Para adicionar: copie uma linha e mude os campos.
+   - id:    nome único, sem espaços (ex.: 'supino-reto')
+   - name:  nome que aparece no app
+   - group: um dos grupos da lista GROUPS abaixo
+   - img:   endereço da foto (ex.: 'fotos/supino.jpg' ou um link).
+            Deixe '' para usar a ilustração padrão.
+   Para criar um grupo novo, acrescente o nome em GROUPS.
+   ============================================================ */
+const GROUPS=['Peito','Costas','Pernas','Ombros','Bíceps','Tríceps','Abdômen','Glúteos','Alongamento'];
+const EXERCISES=[
+
+/*PEITO */
+ {id:'supino-reto',name:'Supino reto',group:'Peito',img:''},
+ {id:'supino-inclinado',name:'Supino inclinado',group:'Peito',img:''},
+ {id:'crucifixo',name:'Crucifixo',group:'Peito',img:''},
+
+ /*COSTAS */
+ {id:'puxada-frontal',name:'Puxada frontal',group:'Costas',img:'https://media.discordapp.net/attachments/1563615723194945626/1563615744703332402/e9b63cb2-b653-478b-9ab0-19b1ba668d7a.png?ex=6ade4624&is=6adcf4a4&hm=107235ec605e93698b196e9264fcd9d494e1469d95b59b604373fed57fc24e26&=&format=webp&quality=lossless&width=975&height=1024'},
+ {id:'remada-curvada',name:'Remada curvada',group:'Costas',img:'https://media.discordapp.net/attachments/1563615723194945626/1563616111050629360/b3b46a74-5ba7-4592-b30f-1798a3bd034b.png?ex=6ade467b&is=6adcf4fb&hm=5ad96e33990bfc05fb6b0570916cae95162976983e241fad20d2935b15cbfc42&=&format=webp&quality=lossless&width=1280&height=1170'},
+ {id:'remada-baixa',name:'Remada baixa',group:'Costas',img:'https://media.discordapp.net/attachments/1563615723194945626/1563616362859859988/b2fa59f1-ffae-4ae4-9e8b-beccf83594ea.png?ex=6ade46b7&is=6adcf537&hm=08496760acc0b57c0fbf6a304a130530f81b5fd456173c29b9ec8cc665a4d36f&=&format=webp&quality=lossless&width=384&height=351'},
+ {id:'Barra-fiz',name:'Barra fixa',group:'Costas',img:'https://media.discordapp.net/attachments/1563615723194945626/1563616817811820676/5e575e8b-4817-454d-b4fb-b657060fc6fb.png?ex=6ade4723&is=6adcf5a3&hm=47897ff93b2cdbce45ad4bfe23f804c4e69068d5cc3e96acacecbd55e3e71e44&=&format=webp&quality=lossless&width=975&height=1024'},
+
+ /*PERNAS */
+ {id:'agachamento',name:'Agachamento livre',group:'Pernas',img:''},
+ {id:'leg-press',name:'Leg press',group:'Pernas',img:''},
+ {id:'cadeira-extensora',name:'Cadeira extensora',group:'Pernas',img:''},
+ {id:'desenvolvimento',name:'Desenvolvimento',group:'Ombros',img:''},
+
+ /*OMBROS */
+ {id:'elevacao-lateral',name:'Elevação lateral',group:'Ombros',img:''},
+ {id:'elevacao-frontal',name:'Elevação frontal',group:'Ombros',img:''},
+
+ /*BICEPS */
+ {id:'rosca-direta',name:'Rosca direta',group:'Bíceps',img:''},
+ {id:'rosca-martelo',name:'Rosca martelo',group:'Bíceps',img:''},
+ {id:'rosca-scott',name:'Rosca Scott',group:'Bíceps',img:''},
+
+ /*TRICEPS */
+ {id:'triceps-pulley',name:'Tríceps pulley',group:'Tríceps',img:''},
+ {id:'triceps-testa',name:'Tríceps testa',group:'Tríceps',img:''},
+ {id:'mergulho',name:'Mergulho no banco',group:'Tríceps',img:''},
+
+ /*ABDOMEN */
+ {id:'abdominal',name:'Abdominal',group:'Abdômen',img:''},
+ {id:'prancha',name:'Prancha',group:'Abdômen',img:''},
+ {id:'elevacao-pernas',name:'Elevação de pernas',group:'Abdômen',img:''},
+
+ /*GLUTEO */
+ {id:'elevacao-pelvica',name:'Elevação pélvica',group:'Glúteos',img:''},
+ {id:'cadeira-abdutora',name:'Cadeira abdutora',group:'Glúteos',img:''},
+ {id:'afundo',name:'Afundo',group:'Glúteos',img:''}
+];
+/* ================= fim do catálogo ================= */
+
+const DS=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'],ORDER=[1,2,3,4,5,6,0];
+const I={dumbbell:'<path d="M6 7v10M3 9v6M18 7v10M21 9v6M6 12h12"/>',user:'<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>',plus:'<path d="M12 5v14M5 12h14"/>',edit:'<path d="M4 20h4L19 9l-4-4L4 16z"/>',back:'<path d="M15 5l-7 7 7 7"/>',camera:'<path d="M3 8h4l2-3h6l2 3h4v12H3z"/><circle cx="12" cy="13" r="3.5"/>',check:'<path d="M5 12l5 5 9-10"/>'};
+const ic=n=>`<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${I[n]}</svg>`;
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid=()=>Math.random().toString(36).slice(2,9);
+const q=id=>document.getElementById(id)?.value??'';
+const def=()=>({profile:{nome:'',email:'',idade:'',peso:'',altura:'',meta:''},routines:[],photos:{}});
+let S;try{S=JSON.parse(localStorage.getItem('gymapp'))||def()}catch(e){S=def()}
+let V={tab:'treino',rid:null,day:null,modal:null};
+function save(){try{localStorage.setItem('gymapp',JSON.stringify(S))}catch(e){toast('Não foi possível salvar (armazenamento cheio)')}}
+function toast(m){const t=document.createElement('div');t.className='toast';t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),1900)}
+function ph(g){const l=esc((g||'?')[0]);return 'data:image/svg+xml;utf8,'+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" fill="#dcdcdc"/><g stroke="#222" stroke-width="3" stroke-linecap="round" fill="none"><path d="M16 22v20M10 26v12M48 22v20M54 26v12M16 32h32"/></g><text x="32" y="58" font-size="11" text-anchor="middle" fill="#222" font-family="sans-serif">${l}</text></svg>`)}
+const imgOf=(exId,img,g)=>`<img src="${esc(S.photos[exId]||img||ph(g))}" data-g="${esc(g)}" alt="">`;
+const getR=()=>S.routines.find(r=>r.id===V.rid);
+const dayKeys=r=>ORDER.filter(d=>r.days[d]);
+const curItem=()=>getR().days[V.day].ex.find(x=>x.uid===V.modal.u);
+
+function listView(){
+ return `<header class="hd"><h1>Treino</h1><button class="btn sm" data-a="newR">${ic('plus')}Nova rotina</button></header>`+
+ (S.routines.length?S.routines.map(r=>{const n=dayKeys(r).reduce((a,d)=>a+r.days[d].ex.length,0);
+  return `<div class="card" data-a="openR" data-id="${r.id}"><div><b>${esc(r.name)}</b><div class="chips">${dayKeys(r).map(d=>`<span class="ch on">${DS[d]}</span>`).join('')}</div></div><span class="mut">${n} exerc.</span></div>`}).join('')
+ :`<div class="empty">${ic('dumbbell')}<p>Nenhuma rotina ainda.<br>Crie a primeira e escolha os dias de treino.</p></div>`);
+}
+function routineView(){
+ const r=getR(),ds=dayKeys(r);if(!r.days[V.day])V.day=ds[0];const D=r.days[V.day];
+ return `<header class="hd"><div class="t"><button class="ib" data-a="back" aria-label="Voltar">${ic('back')}</button><h1>${esc(r.name)}</h1></div><button class="ib" data-a="editR" aria-label="Editar rotina">${ic('edit')}</button></header>
+ <div class="days">${ds.map(d=>`<button class="ch ${d==V.day?'on':''}" data-a="day" data-v="${d}">${DS[d]}</button>`).join('')}</div>
+ <div class="sec">Grupos musculares do dia</div>
+ <div class="chips" style="margin-top:0">${GROUPS.map(g=>`<button class="ch ${D.groups.includes(g)?'on':''}" data-a="tgG" data-g="${g}">${g}</button>`).join('')}</div>
+ <div class="sec">Exercícios</div>
+ ${D.ex.length?D.ex.map(x=>`<div class="row" data-a="editEx" data-u="${x.uid}">${imgOf(x.exId,x.img,x.group)}<div class="rt"><b>${esc(x.name)}</b><span class="mut">${esc(x.group)}</span></div><div class="sr"><b>${x.sets} séries</b>${x.reps} reps</div></div>`).join(''):`<p class="mut">Nenhum exercício neste dia.</p>`}
+ <button class="btn full" data-a="addEx">${ic('plus')}Adicionar exercício</button>`;
+}
+function perfilView(){
+ const p=S.profile,f=(id,l,t,v,ph)=>`<div><label for="${id}">${l}</label><input id="${id}" type="${t}" value="${esc(v)}" placeholder="${ph}" ${t==='number'?'inputmode="decimal" min="0"':''}></div>`;
+ return `<header class="hd"><h1>Perfil</h1></header>
+ <div class="pvr" style="margin-bottom:6px"><div class="av">${esc((p.nome||'?')[0].toUpperCase())}</div><div><b>${esc(p.nome||'Seu nome')}</b><div class="mut">${esc(p.email||'seu@gmail.com')}</div></div></div>
+ ${f('pn','Nome','text',p.nome,'Seu nome')}${f('pe','E-mail (Gmail)','email',p.email,'seu@gmail.com')}
+ <div class="g2">${f('pi','Idade','number',p.idade,'anos')}${f('pp','Peso (kg)','number',p.peso,'kg')}</div>
+ <div class="g2">${f('ph','Altura (cm)','number',p.altura,'cm')}${f('pm','Meta diária de treino (min)','number',p.meta,'minutos')}</div>
+ <button class="btn full" data-a="saveP">${ic('check')}Salvar perfil</button>`;
+}
+function modalHtml(){
+ const m=V.modal;let h='';
+ if(m.t==='r'){
+  h=`<h2>${m.id?'Editar rotina':'Nova rotina'}</h2><label for="rn">Nome da rotina</label><input id="rn" value="${esc(m.name)}" placeholder="Ex.: Hipertrofia">
+  <label>Dias de treino</label><div class="chips" style="margin-top:0">${ORDER.map(d=>`<button class="ch ${m.days.includes(d)?'on':''}" data-a="tgD" data-d="${d}">${DS[d]}</button>`).join('')}</div>
+  <button class="btn full" data-a="saveR">Salvar rotina</button>`+
+  (m.id?`<button class="btn ghost full" data-a="${m.cd?'delR':'askDel'}">${m.cd?'Toque de novo para excluir':'Excluir rotina'}</button>`:'');
+ }else if(m.t==='a'){
+  const list=EXERCISES.filter(e=>!m.g||e.group===m.g);
+  h=`<h2>Adicionar exercício</h2><div class="chips" style="margin-top:0"><button class="ch ${!m.g?'on':''}" data-a="fg" data-g="">Todos</button>${GROUPS.map(g=>`<button class="ch ${m.g===g?'on':''}" data-a="fg" data-g="${g}">${g}</button>`).join('')}</div>
+  <div style="margin-top:8px">${list.map(e=>`<div class="row" data-a="pick" data-id="${e.id}">${imgOf(e.id,e.img,e.group)}<div class="rt"><b>${esc(e.name)}</b><span class="mut">${esc(e.group)}</span></div>${ic('plus')}</div>`).join('')}</div>
+  <div class="sec">Ou crie um exercício próprio</div><input id="cn" placeholder="Nome do exercício"><label for="cg">Grupo muscular</label><select id="cg">${GROUPS.map(g=>`<option>${g}</option>`).join('')}</select>
+  <button class="btn ghost full" data-a="addC">${ic('plus')}Criar e adicionar</button>`;
+ }else if(m.t==='e'){
+  const x=curItem();
+  h=`<h2>Editar exercício</h2><div class="pvr"><img class="pv" src="${esc(S.photos[x.exId]||x.img||ph(x.group))}" data-g="${esc(x.group)}" alt=""><label class="btn ghost sm" style="margin:0;color:var(--fg)">${ic('camera')}Trocar foto<input type="file" accept="image/*" id="phf" hidden></label></div>
+  <label for="en">Nome</label><input id="en" value="${esc(x.name)}"><label for="eg">Grupo muscular</label><select id="eg">${GROUPS.map(g=>`<option ${g===x.group?'selected':''}>${g}</option>`).join('')}</select>
+  <div class="g2"><div><label for="es">Séries</label><input id="es" type="number" inputmode="numeric" min="1" value="${x.sets}"></div><div><label for="er">Repetições</label><input id="er" type="number" inputmode="numeric" min="1" value="${x.reps}"></div></div>
+  <button class="btn full" data-a="saveEx">Salvar</button><button class="btn ghost full" data-a="delEx">Remover do dia</button>`;
+ }
+ return `<div class="ov" data-a="close"><div class="sh">${h}</div></div>`;
+}
+function render(){
+ $a=document.getElementById('app');
+ $a.innerHTML=V.tab==='perfil'?perfilView():(V.rid?routineView():listView());
+ document.getElementById('modal').innerHTML=V.modal?modalHtml():'';
+ t1.innerHTML=ic('dumbbell')+'Treino';t2.innerHTML=ic('user')+'Perfil';
+ t1.setAttribute('aria-current',V.tab==='treino');t2.setAttribute('aria-current',V.tab==='perfil');
+}
+function applyEx(){const x=curItem();x.name=q('en').trim()||x.name;x.group=q('eg')||x.group;x.sets=Math.max(1,+q('es')||1);x.reps=Math.max(1,+q('er')||1)}
+function addItem(e){const D=getR().days[V.day];D.ex.push({uid:uid(),exId:e.id,name:e.name,group:e.group,img:e.img||'',sets:3,reps:12});if(!D.groups.includes(e.group))D.groups.push(e.group)}
+function act(a,d){
+ const m=V.modal;
+ if(a==='tab'){V.tab=d.v;V.rid=null}
+ else if(a==='newR')V.modal={t:'r',name:'',days:[]};
+ else if(a==='editR'){const r=getR();V.modal={t:'r',id:r.id,name:r.name,days:dayKeys(r)}}
+ else if(a==='tgD'){m.name=q('rn');const n=+d.d;m.days=m.days.includes(n)?m.days.filter(x=>x!==n):[...m.days,n]}
+ else if(a==='saveR'){
+  const name=q('rn').trim()||'Minha rotina';if(!m.days.length){toast('Escolha ao menos um dia');return}
+  let r=m.id?S.routines.find(x=>x.id===m.id):null;
+  if(!r){r={id:uid(),name,days:{}};S.routines.push(r)}r.name=name;
+  const nd={};m.days.forEach(n=>nd[n]=r.days[n]||{groups:[],ex:[]});r.days=nd;
+  V.rid=r.id;V.day=dayKeys(r)[0];V.modal=null;save()}
+ else if(a==='askDel')m.cd=true;
+ else if(a==='delR'){S.routines=S.routines.filter(r=>r.id!==m.id);V.rid=null;V.modal=null;save()}
+ else if(a==='openR'){V.rid=d.id;V.day=dayKeys(getR())[0]}
+ else if(a==='back')V.rid=null;
+ else if(a==='day')V.day=+d.v;
+ else if(a==='tgG'){const g=getR().days[V.day].groups;const i=g.indexOf(d.g);i<0?g.push(d.g):g.splice(i,1);save()}
+ else if(a==='addEx')V.modal={t:'a',g:null};
+ else if(a==='fg')m.g=d.g||null;
+ else if(a==='pick'){addItem(EXERCISES.find(e=>e.id===d.id));V.modal=null;save()}
+ else if(a==='addC'){const n=q('cn').trim();if(!n){toast('Digite o nome do exercício');return}addItem({id:'c'+uid(),name:n,group:q('cg'),img:''});V.modal=null;save()}
+ else if(a==='editEx')V.modal={t:'e',u:d.u};
+ else if(a==='saveEx'){applyEx();V.modal=null;save()}
+ else if(a==='delEx'){const D=getR().days[V.day];D.ex=D.ex.filter(x=>x.uid!==m.u);V.modal=null;save()}
+ else if(a==='saveP'){S.profile={nome:q('pn').trim(),email:q('pe').trim(),idade:q('pi'),peso:q('pp'),altura:q('ph'),meta:q('pm')};save();toast('Perfil salvo')}
+ else if(a==='close')V.modal=null;
+ render();
+}
+document.addEventListener('click',e=>{
+ const t=e.target.closest('[data-a]');if(!t)return;
+ if(t.classList.contains('ov')&&e.target!==t)return;
+ act(t.dataset.a,t.dataset);
+});
+document.addEventListener('change',e=>{
+ if(e.target.id!=='phf'||!e.target.files[0])return;
+ const f=e.target.files[0],r=new FileReader();
+ r.onload=()=>{const im=new Image();im.onload=()=>{
+  const s=Math.min(1,480/Math.max(im.width,im.height)),c=document.createElement('canvas');
+  c.width=im.width*s;c.height=im.height*s;c.getContext('2d').drawImage(im,0,0,c.width,c.height);
+  applyEx();S.photos[curItem().exId]=c.toDataURL('image/jpeg',.75);save();render()};im.src=r.result};
+ r.readAsDataURL(f);
+});
+document.addEventListener('error',e=>{const t=e.target;if(t.tagName==='IMG'&&t.dataset.g&&!t.dataset.f){t.dataset.f=1;t.src=ph(t.dataset.g)}},true);
+render();
+</script>
+</body>
+</html>
